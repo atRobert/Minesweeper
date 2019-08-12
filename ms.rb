@@ -5,8 +5,7 @@ class Minesweeper
         @flag_pair = []
         @known_empty = []
         plant_bombs
-        display_nums
-        
+        display_nums   
     end
 
     def grid 
@@ -69,8 +68,10 @@ class Minesweeper
         col = col.to_i
         row -= 1
         col -= 1
-        if @flag_pair.include? (row.to_s + col.to_s)
-            puts 'There is already a flag there!'
+        if @known_empty.include? (row.to_s + col.to_s)
+            puts 'You can not put a flag in an empty spot.'
+        elsif @flag_pair.include? (row.to_s + col.to_s) 
+            puts 'You can not put a flag there.'
         else
             @flag_pair << (row.to_s + col.to_s)
         end
@@ -96,10 +97,8 @@ class Minesweeper
         @grid.map do |row|
             col_idx = -1
             row_idx += 1 
-            row.map do |col|
-                
-                col_idx += 1
-                
+            row.map do |col|            
+                col_idx += 1            
                 if @flag_pair.include? ((row_idx.to_s) + (col_idx.to_s))
                     col = :F
                 elsif col == :B
@@ -115,13 +114,19 @@ class Minesweeper
         end
     end
 
-    def player_choie(row,col)
+    def player_choice(row,col)
         row = row.to_i
-        col = col.to_s
-        if @grid[row][col] == :H
-            open_up(row,col)
+        col = col.to_i
+        row = row - 1 
+        col = col - 1
+        if @known_empty.include? ((row.to_s)+(col.to_s))
+            puts 'That spot is already empty.'
+        elsif @flag_pair.include? ((row.to_s)+(col.to_s))
+            puts "You can't guess where you have a flag."
+            
         elsif @grid[row][col] == 0
-            known_empty << (row.to_s + col.to_s)
+            @known_empty << (row.to_s + col.to_s)
+            #open_up(row,col)
         elsif @grid[row][col] == :B
             game_over
         else
@@ -143,6 +148,7 @@ class Minesweeper
         else
             player_choice(player_position[0], player_position[1])
         end
+        display_board
     end
 
 
