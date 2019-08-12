@@ -5,7 +5,7 @@ class Minesweeper
         @flag_pair = []
     end
 
-    def grid
+    def grid 
         @grid
     end
 
@@ -36,8 +36,25 @@ class Minesweeper
         col = col.to_i
         row -= 1
         col -= 1
-        @flag_pair << (row.to_s + col.to_s)
+        if @flag_pair.include? (row.to_s + col.to_s)
+            puts 'There is already a flag there!'
+        else
+            @flag_pair << (row.to_s + col.to_s)
+        end
     end
+
+    def unflag_map(row,col)
+        row = row.to_i
+        col = col.to_i
+        row -= 1
+        col -= 1
+        if @flag_pair.include? (row.to_s + col.to_s)
+            @flag_pair.delete((row.to_s + col.to_s))
+        else
+            puts 'There is no flag there!'
+        end
+    end
+        
 
     def display_board
         row_idx = -1
@@ -78,7 +95,7 @@ class Minesweeper
 
     def open_up(row,col)
         open_hash = {}
-        
+    
     end
 
     def game_over
@@ -90,10 +107,11 @@ class Minesweeper
         player_position = player_position.split(' ')
         if player_position[0] == 'flag'
             flag_map(player_position[1], player_position[2])
+        elsif player_position[0] == 'unflag'
+            unflag_map(player_position[1], player_position[2])
         else
             player_choice(player_position[0], player_position[1])
         end
-
     end
 
 
