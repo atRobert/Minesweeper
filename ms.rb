@@ -184,12 +184,13 @@ class Minesweeper
         else
             player_choice(player_position[0], player_position[1])
         end
-        display_board
+        print(display_board)
     end
 
 
 end
 
 game = Minesweeper.new
-while game.game_over
+while true
     game.player_move
+end
