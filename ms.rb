@@ -26,7 +26,7 @@ class Minesweeper
     end
 
     def plant_bombs
-        while num_bombs < (81*0.05)
+        while num_bombs < 15
             rand_col = rand(@grid.length)
             rand_row = rand(@grid.length)
             @grid[rand_col][rand_row] = :B
@@ -118,16 +118,38 @@ class Minesweeper
     end
 
     def open_up(row,col)
+        return if @grid[row][col] == nil
+        return if @known_empty.include? (row.to_s + col.to_s)
         numera = [1,2,3,4,5,6,7,8,9]
-        return if numera.include? @grid[row][col] 
-        return if @gird[row][col] == nil
+        if numera.include? @grid[row][col]
+            @known_empty << (row.to_s + col.to_s)
+            return    
+        end
+        
+        
+
+        @known_empty << (row.to_s + col.to_s)
+        # North
+        open_up(row-1,col) if row-1 > -1
+        # NE
+        open_up(row - 1,col + 1) if (row > -1) && (col + 1 < 9)    
+        # East
+        open_up(row,col+1) if (col+1 < 9)
+        # SE
+        open_up(row+1,col+1) if (row+1 < 9) && (col + 1 < 9)       
+        # South
+        open_up(row + 1,col) if row + 1 < 9  
+        # SW
+        open_up(row + 1,col - 1) if (row + 1 < 9) && (col - 1  > -1)
+        # West
+        open_up(row,col - 1) if col - 1 > -1  
+        # NW
+        open_up(row - 1,col - 1) if (row -1 > -1) && (col - 1 > -1) 
+
+        return
+
     end
 
-
-
-
-
-        
 
     def player_choice(row,col)
         row = row.to_i
@@ -140,10 +162,9 @@ class Minesweeper
             puts "You can't guess where you have a flag."
             
         elsif @grid[row][col] == 0
-            @known_empty << (row.to_s + col.to_s)
-            #open_up(row,col)
+            open_up(row,col)
         elsif @grid[row][col] == :B
-            game_over
+            @game_over = false
         else
             @known_empty << (row.to_s + col.to_s)
         end
@@ -168,3 +189,7 @@ class Minesweeper
 
 
 end
+
+game = Minesweeper.new
+while game.game_over
+    game.player_move
