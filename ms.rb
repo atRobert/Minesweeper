@@ -1,8 +1,12 @@
 class Minesweeper
     def initialize
-        @grid = Array.new(9) {Array.new(9,:H)}
+        @grid = Array.new(9) {Array.new(9,0)}
         @game_over = false
         @flag_pair = []
+        @known_empty = {}
+        plant_bombs
+        display_nums
+        
     end
 
     def grid 
@@ -31,6 +35,43 @@ class Minesweeper
         end
     end
 
+    def display_nums
+        (0...9).each do |ro|
+            (0...9).each do |co|
+                if @grid[ro][co] == :B
+                    surround_nums(ro,co)
+                end
+            end
+        end
+    end
+
+    def surround_nums(row, col)
+        # North
+        @grid[row-1][col] += 1 if ((row - 1) > -1) && @grid[row-1][col] != :B
+            
+        # NE
+        @grid[row - 1][col + 1] += 1 if ((row - 1) > -1) && ((col+1) < 9) && @grid[row - 1][col + 1] != :B
+            
+        # East
+        @grid[row][col+1] += 1 if ((col+1) < 9) && @grid[row][col+1] != :B
+            
+        # SE
+        @grid[row+1][col+1] += 1 if ((row + 1) < 9) && ((col+1) < 9) && @grid[row+1][col+1] != :B
+             
+        # South
+        @grid[row + 1][col] += 1 if ((row + 1) < 9) && @grid[row + 1][col] != :B
+             
+        # SW
+        @grid[row + 1][col - 1] += 1 if ((row + 1) < 9) && ((col-1) > -1) && @grid[row + 1][col - 1] != :B
+             
+        # West
+        @grid[row][col - 1] += 1  if ((col - 1) > -1) && @grid[row][col - 1] != :B
+            
+        # NW
+        @grid[row - 1][col - 1] += 1  if ((row - 1) > -1) && ((col - 1 ) > -1) && @grid[row - 1][col - 1] != :B
+    end
+
+            
     def flag_map(row,col)
         row = row.to_i
         col = col.to_i
@@ -70,7 +111,7 @@ class Minesweeper
                 elsif @flag_pair.include? ((row_idx.to_s) + (col_idx.to_s))
                     col = :F
                 else
-                    col
+                    col = :H
                 end
                 
             end
@@ -92,14 +133,11 @@ class Minesweeper
         end
     end
 
-
-    def open_up(row,col)
-        open_hash = {}
     
-    end
+    
 
     def game_over
-        @game_over = True 
+        @game_over = true 
     end
 
     def player_move
