@@ -1,7 +1,7 @@
 class Minesweeper
     def initialize
         @grid = Array.new(9) {Array.new(9,0)}
-        @game_over = false
+        @game_over = true
         @flag_pair = []
         @known_empty = []
         plant_bombs
@@ -94,7 +94,7 @@ class Minesweeper
     def display_board
         row_idx = -1
         numera = [1,2,3,4,5,6,7,8,9]
-        @grid.map do |row|
+        @display = @grid.map do |row|
             
             col_idx = -1
             row_idx += 1 
@@ -164,6 +164,7 @@ class Minesweeper
         elsif @grid[row][col] == 0
             open_up(row,col)
         elsif @grid[row][col] == :B
+            puts 'YOU LOSE, SORRY'
             @game_over = false
         else
             @known_empty << (row.to_s + col.to_s)
@@ -171,7 +172,7 @@ class Minesweeper
     end
 
     def game_over
-        @game_over = true 
+        @game_over
     end
 
     def player_move
@@ -184,13 +185,20 @@ class Minesweeper
         else
             player_choice(player_position[0], player_position[1])
         end
-        print(display_board)
+        display_board
+        
+        if game_over == true 
+            @display.each do |row|
+                puts row.join(' ')
+            end
+        end
+
     end
 
 
 end
 
 game = Minesweeper.new
-while true
+while game.game_over
     game.player_move
 end
