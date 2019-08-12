@@ -93,8 +93,9 @@ class Minesweeper
 
     def display_board
         row_idx = -1
-        
+        numera = [1,2,3,4,5,6,7,8,9]
         @grid.map do |row|
+            
             col_idx = -1
             row_idx += 1 
             row.map do |col|            
@@ -103,6 +104,8 @@ class Minesweeper
                     col = :F
                 elsif col == :B
                     col = :H
+                elsif (@known_empty.include? ((row_idx.to_s) + (col_idx.to_s))) && (numera.include? col)
+                    col = col
                 elsif @known_empty.include? ((row_idx.to_s) + (col_idx.to_s))
                     col = 'O'
                 else
@@ -114,13 +117,25 @@ class Minesweeper
         end
     end
 
+    def open_up(row,col)
+        numera = [1,2,3,4,5,6,7,8,9]
+        return if numera.include? @grid[row][col] 
+        return if @gird[row][col] == nil
+    end
+
+
+
+
+
+        
+
     def player_choice(row,col)
         row = row.to_i
         col = col.to_i
         row = row - 1 
         col = col - 1
         if @known_empty.include? ((row.to_s)+(col.to_s))
-            puts 'That spot is already empty.'
+            puts 'That spot is already known.'
         elsif @flag_pair.include? ((row.to_s)+(col.to_s))
             puts "You can't guess where you have a flag."
             
@@ -130,7 +145,7 @@ class Minesweeper
         elsif @grid[row][col] == :B
             game_over
         else
-            puts('You already know how many bombs adjacent!')
+            @known_empty << (row.to_s + col.to_s)
         end
     end
 
