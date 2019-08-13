@@ -1,5 +1,4 @@
 require 'yaml'
-
 require 'colorize'
 
 def save_game(curr_game)
@@ -16,11 +15,7 @@ class Minesweeper
         display_nums   
     end
 
-    def grid 
-        @grid
-    end
-
-    
+    #Counts the total bombs present on the map.
     def num_bombs
         count = 0
         (0...9).each do |ro|
@@ -33,6 +28,8 @@ class Minesweeper
         count
     end
 
+    # Randomly plants bombs around the map. Since there are 81 spots
+    # I felt 15 bombs was a good amount.
     def plant_bombs
         while num_bombs < 15
             rand_col = rand(@grid.length)
@@ -41,6 +38,8 @@ class Minesweeper
         end
     end
 
+    #This finds every coordinate that is a bomb. Then uses helper
+    #Function "surround_nums" to mark areas around the bomb with +1
     def display_nums
         (0...9).each do |ro|
             (0...9).each do |co|
@@ -51,6 +50,8 @@ class Minesweeper
         end
     end
 
+    # After planting the bombs, a number border is generated around it. Adding a 1 to every tile 
+    # that touches the bomb.
     def surround_nums(row, col)
         # North
         @grid[row-1][col] += 1 if ((row - 1) > -1) && @grid[row-1][col] != :B        
@@ -70,7 +71,8 @@ class Minesweeper
         @grid[row - 1][col - 1] += 1  if ((row - 1) > -1) && ((col - 1 ) > -1) && @grid[row - 1][col - 1] != :B
     end
 
-            
+    # Checks to see there is no flag at a position. If there isn't 
+    # it places one.
     def flag_map(row,col)
         row = row.to_i
         col = col.to_i
@@ -85,7 +87,8 @@ class Minesweeper
         end
     end
 
-
+    # Checks to see if a flag is at a position. If there is
+    # the flag is removed.
     def unflag_map(row,col)
         row = row.to_i
         col = col.to_i
@@ -98,7 +101,7 @@ class Minesweeper
         end
     end
         
-
+    #The board the player sees after every move. Hides bombs. 
     def display_board
         row_idx = -1
         numera = [1,2,3,4,5,6,7,8,9]
@@ -118,13 +121,13 @@ class Minesweeper
                     col = 'O'.blue
                 else
                     col = 'H'.green
-                end
-                
-            end
-            
+                end        
+            end        
         end
     end
 
+    #Once a player makes a valid move. This spreads the map so that 
+    #you get an open area with a border of numbers. Works Recursively.
     def open_up(row,col)
         return if @grid[row][col] == nil
         return if @known_empty.include? (row.to_s + col.to_s)
@@ -134,8 +137,6 @@ class Minesweeper
             return    
         end
         
-        
-
         @known_empty << (row.to_s + col.to_s)
         # North
         open_up(row-1,col) if row-1 > -1
@@ -158,7 +159,9 @@ class Minesweeper
 
     end
 
-
+    #Decides if the player's move is valid.
+    #You can't try and reveal a spot already known.
+    #You can't reveal a spot that has a flag on it.
     def player_choice(row,col)
         row = row.to_i
         col = col.to_i
@@ -179,24 +182,26 @@ class Minesweeper
         end
     end
 
+    #A Getter for the game_over variable.
     def game_over
         @game_over
     end
 
+    #Shows the display board. Player can not see bombs. 
     def show_board
         @display.each do |row|
             puts row.join(' ')
         end
     end
 
+    #Displays the entire board, showing all the bomb placements.
     def loser_board
         @grid.each do |row|
             puts row.join(' ')
         end
     end
 
-
-
+    #Player decides if they want to flag, unflag, or make a move.
     def player_move
         player_position = gets.chomp
         player_position = player_position.split(' ')
@@ -216,6 +221,7 @@ class Minesweeper
 
 end
 
+puts 'Welcome to Minesweeper!'
 puts 'Would you like to start from your last game? (Y / N)'
 open_game = gets.chomp
 if open_game.downcase == 'y'
@@ -224,7 +230,14 @@ else
     game = Minesweeper.new
 end
 
+puts ' '
+puts 'To pick a coordinate, enter it as such: "3 4"'
+puts 'To flag a coordinate, enter it as such: "flag 3 4"'
+puts 'To unflag a coordinate, enter it as such: "unflag 3 4"'
+puts ' ' 
+
 while game.game_over
+    puts 'Choose a coordinate!'
     game.player_move
     save_game(game)
 end
