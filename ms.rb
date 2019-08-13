@@ -1,3 +1,11 @@
+require 'yaml'
+
+
+
+def save_game(curr_game)
+    File.open('Minesweeper.yml',"w") { |file| file.write(curr_game.to_yaml)}
+end
+
 class Minesweeper
     def initialize
         @grid = Array.new(9) {Array.new(9,0)}
@@ -181,6 +189,7 @@ class Minesweeper
         end
     end
 
+
     def player_move
         player_position = gets.chomp
         player_position = player_position.split(' ')
@@ -200,7 +209,16 @@ class Minesweeper
 
 end
 
-game = Minesweeper.new
+puts 'Would you like to start from your last game? (Y / N)'
+open_game = gets.chomp
+if open_game.downcase == 'y'
+    game = YAML.load(File.read('Minesweeper.yml'))
+else
+    game = Minesweeper.new
+end
+
 while game.game_over
     game.player_move
+    save_game(game)
 end
+
