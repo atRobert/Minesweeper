@@ -1,6 +1,6 @@
 require 'yaml'
 
-
+require 'colorize'
 
 def save_game(curr_game)
     File.open('Minesweeper.yml',"w") { |file| file.write(curr_game.to_yaml)}
@@ -109,15 +109,15 @@ class Minesweeper
             row.map do |col|            
                 col_idx += 1            
                 if @flag_pair.include? ((row_idx.to_s) + (col_idx.to_s))
-                    col = :F
+                    col = 'F'.orange
                 elsif col == :B
-                    col = :H
+                    col = 'H'.green
                 elsif (@known_empty.include? ((row_idx.to_s) + (col_idx.to_s))) && (numera.include? col)
-                    col = col
+                    col = col.to_s.red
                 elsif @known_empty.include? ((row_idx.to_s) + (col_idx.to_s))
-                    col = 'O'
+                    col = 'O'.blue
                 else
-                    col = :H
+                    col = 'H'.green
                 end
                 
             end
@@ -189,6 +189,13 @@ class Minesweeper
         end
     end
 
+    def loser_board
+        @grid.each do |row|
+            puts row.join(' ')
+        end
+    end
+
+
 
     def player_move
         player_position = gets.chomp
@@ -221,4 +228,8 @@ while game.game_over
     game.player_move
     save_game(game)
 end
+
+game.loser_board
+
+
 
