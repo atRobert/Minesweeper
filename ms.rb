@@ -175,6 +175,12 @@ class Minesweeper
         @game_over
     end
 
+    def show_board
+        @display.each do |row|
+            puts row.join(' ')
+        end
+    end
+
     def player_move
         player_position = gets.chomp
         player_position = player_position.split(' ')
@@ -187,11 +193,7 @@ class Minesweeper
         end
         display_board
         
-        if game_over == true 
-            @display.each do |row|
-                puts row.join(' ')
-            end
-        end
+        show_board if game_over == true 
 
     end
 
